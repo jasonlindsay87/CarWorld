@@ -1,0 +1,92 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="CarWorldModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="Car">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" />
+    <Property Name="Year" Type="Int32" Nullable="false" />
+    <Property Name="Colour" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="ManufacturerID" Type="Int32" Nullable="false" />
+    <Property Name="ModelID" Type="Int32" Nullable="false" />
+    <Property Name="Mileage" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="Manufacturer" Relationship="CarWorldModel.FK_Car_Manufacturer" FromRole="Car" ToRole="Manufacturer" />
+    <NavigationProperty Name="Model" Relationship="CarWorldModel.FK_Car_Model" FromRole="Car" ToRole="Model" />
+  </EntityType>
+  <EntityType Name="Manufacturer">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" />
+    <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="Country" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+    <NavigationProperty Name="Models" Relationship="CarWorldModel.FK_Model_Manufacturer" FromRole="Manufacturer" ToRole="Model" />
+    <NavigationProperty Name="Cars" Relationship="CarWorldModel.FK_Car_Manufacturer" FromRole="Manufacturer" ToRole="Car" />
+  </EntityType>
+  <EntityType Name="Model">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" />
+    <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="ManufacturerID" Type="Int32" Nullable="false" />
+    <Property Name="Doors" Type="Int32" />
+    <Property Name="Details" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="EngineSize" Type="Decimal" Nullable="false" Precision="4" Scale="2" />
+    <NavigationProperty Name="Manufacturer" Relationship="CarWorldModel.FK_Model_Manufacturer" FromRole="Model" ToRole="Manufacturer" />
+    <NavigationProperty Name="Cars" Relationship="CarWorldModel.FK_Car_Model" FromRole="Model" ToRole="Car" />
+  </EntityType>
+  <EntityContainer Name="CarWorldEntities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="Cars" EntityType="Self.Car" />
+    <EntitySet Name="Manufacturers" EntityType="Self.Manufacturer" />
+    <EntitySet Name="Models" EntityType="Self.Model" />
+    <AssociationSet Name="FK_Model_Manufacturer" Association="CarWorldModel.FK_Model_Manufacturer">
+      <End Role="Manufacturer" EntitySet="Manufacturers" />
+      <End Role="Model" EntitySet="Models" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Car_Manufacturer" Association="CarWorldModel.FK_Car_Manufacturer">
+      <End Role="Manufacturer" EntitySet="Manufacturers" />
+      <End Role="Car" EntitySet="Cars" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Car_Model" Association="CarWorldModel.FK_Car_Model">
+      <End Role="Model" EntitySet="Models" />
+      <End Role="Car" EntitySet="Cars" />
+    </AssociationSet>
+  </EntityContainer>
+  <Association Name="FK_Model_Manufacturer">
+    <End Type="CarWorldModel.Manufacturer" Role="Manufacturer" Multiplicity="1" />
+    <End Type="CarWorldModel.Model" Role="Model" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Manufacturer">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Model">
+        <PropertyRef Name="ManufacturerID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Car_Manufacturer">
+    <End Type="CarWorldModel.Manufacturer" Role="Manufacturer" Multiplicity="1" />
+    <End Type="CarWorldModel.Car" Role="Car" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Manufacturer">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Car">
+        <PropertyRef Name="ManufacturerID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Car_Model">
+    <End Type="CarWorldModel.Model" Role="Model" Multiplicity="1" />
+    <End Type="CarWorldModel.Car" Role="Car" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Model">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Car">
+        <PropertyRef Name="ModelID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+</Schema>
